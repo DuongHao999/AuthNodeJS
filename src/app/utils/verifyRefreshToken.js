@@ -11,14 +11,12 @@ const verifyRefreshToken = async (refreshToken) => {
             return { error: true, message: "Invalid refresh token" };
         }
 
-        const isValidRefreshToken = jwt.verify(refreshToken, privateKey);
-        console.log(isValidRefreshToken, privateKey);
+        const tokenDetails = jwt.verify(refreshToken, privateKey);
 
-        if (!isValidRefreshToken) {
-            console.log(444);
+        if (!tokenDetails) {
             return { error: true, message: "Invalid refresh token" };
         }
-        console.log(555);
+
         return {
             tokenDetails,
             error: false,

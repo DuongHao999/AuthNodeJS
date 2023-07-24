@@ -37,13 +37,13 @@ export async function login(req, res, next) {
         //         .status(400)
         //         .json({ error: true, message: error.details[0].message });
 
-        const user = await User.findOne({ email: req.body.email });
+        const user = await User.findOne({ username: req.body.username });
 
-        if (!user)
+        if (!user) {
             return res
                 .status(401)
-                .json({ error: true, message: "Invalid email or password" });
-
+                .json({ error: true, message: "invalid username!" });
+        }
         const verifiedPassword = await bcrypt.compare(
             req.body.password,
             user.password
@@ -51,14 +51,13 @@ export async function login(req, res, next) {
         if (!verifiedPassword)
             return res
                 .status(401)
-                .json({ error: true, message: "Invalid email or password" });
+                .json({ error: true, message: "Invalid password!" });
 
-        const { accessToken, refreshToken } = await generateToken(user);
+        const { accessToken } = await generateToken(user, res);
 
         res.status(200).json({
             error: false,
             accessToken,
-            refreshToken,
             message: "Logged in sucessfully",
         });
     }

@@ -6,11 +6,6 @@ const verifyRefreshToken = async (refreshToken) => {
     try {
         const privateKey = process.env.REFRESH_TOKEN_KEY;
 
-        const userToken = await UserToken.findOne({ token: refreshToken });
-        if (!userToken) {
-            return { error: true, message: "Invalid refresh token" };
-        }
-
         const tokenDetails = jwt.verify(refreshToken, privateKey);
 
         if (!tokenDetails) {

@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken";
-import UserToken from "../models/UserToken.js";
 import 'dotenv/config';
-const generateToken = async (user) => {
+const generateToken = async (user, res) => {
     try {
         const payload = { _id: user._id, roles: user.roles };
         const accessToken = jwt.sign(
@@ -11,34 +10,23 @@ const generateToken = async (user) => {
                 expiresIn: '14m'
             }
         );
-        // console.log(process.env.ACCESS_TOKEN_KEY); return;
 
         const refreshToken = jwt.sign(
             payload,
             process.env.REFRESH_TOKEN_KEY,
             {
-                expiresIn: '14m'
+                expiresIn: '1d'
             }
         );
 
-        // console.log(accessToken);
-        // console.log(refreshToken);
-
-        const userToken = await UserToken.findOne({ userId: user._id });
-        console.log(userToken);
-
-        if (userToken) {
-            await UserToken.deleteOne({ userId: user._id });
-        }
-
-        const ut = await new UserToken({
-            userId: user._id,
-            token: refreshToken
-        }).save();
-
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            path: "/",
+            sameSite: "strict", secure: false,
+            maxAge: 24 * 60 * 60 * 1000
+        })
         return Promise.resolve({
-            accessToken: accessToken,
-            refreshToken: refreshToken
+            accessToken: accessToken
         });
     } catch (error) {
         return Promise.reject(error);

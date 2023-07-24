@@ -2,11 +2,13 @@ import express from 'express';
 import connect from './src/config/db/index.js';
 import route from './src/routes/index.js';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 const port = 8000;
 
 app.use(express.json()); // parse req body
+app.use(cookieParser()); // fix error when can not get value from cookie
 app.use(cors());
 connect();
 

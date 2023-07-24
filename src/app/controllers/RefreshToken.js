@@ -20,7 +20,7 @@ export async function getNewAcessToken(req, res, next) {
 
     // const { tokenDetails, error, message } = await verifyRefreshToken(req.body.refreshToken);
     try {
-        const { error, tokenDetails, message } = await verifyRefreshToken(req.body.refreshToken);
+        const { error, tokenDetails, message } = await verifyRefreshToken(req.cookies.refreshToken);
         // console.log(error, tokenDetails._id, tokenDetails.roles);
 
         if (error) {
